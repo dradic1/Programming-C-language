@@ -1,0 +1,58 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "header.h"
+
+void zapisivanjeKnjige(char* file) {
+ 
+	FILE* pFile = fopen(file, "ab+");
+	if (pFile == NULL) {
+		perror("No file");
+		exit(EXIT_FAILURE);
+	}
+	
+	KNJIGA* temp = (KNJIGA*)calloc(1,sizeof(KNJIGA));
+	if (temp == NULL) {
+		perror("Din. alloc.");
+		exit(EXIT_FAILURE);
+	}
+	printf ("Unesi naslov: ");
+	scanf("%49[^\n]",temp->ime);
+	getchar();
+	printf ("Unesi autora: ");
+	scanf("%49[^\n]",temp->autor);
+	getchar();
+	printf ("Unesi ISBN: ");
+	scanf("%ld",&temp->isbn);
+	getchar();
+	
+	fwrite (temp, sizeof(KNJIGA),1,pFile);
+	fclose(pFile);
+	free (temp);
+	
+}
+
+KNJIGA* citajKnjige(char *file, int n){
+    FILE* pFile = fopen(file, "rb+");
+	if (pFile == NULL) {
+		perror("No file");
+		exit(EXIT_FAILURE);
+	}
+	
+	KNJIGA* temp = (KNJIGA*)calloc(n,sizeof(KNJIGA));
+	if (temp == NULL) {
+		perror("Din. alloc.");
+		exit(EXIT_FAILURE);
+	}
+	int bin;
+	fread(&bin, sizeof(int), 1, pFile);
+    fread(temp,sizeof(KNJIGA),n,pFile);
+    fclose(pFile);
+    return temp;
+}
+
+KNJIGA* oslobodiMe(KNJIGA *K){
+     free(K);
+     return NULL;
+}
